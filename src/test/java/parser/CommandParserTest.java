@@ -1,17 +1,14 @@
 package parser;
 
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommandParserTest {
-
     private final CommandParser parser = new CommandParser();
 
     @Test
     void shouldParseCommandWithArguments() {
-        ParsedCommand result =
-            parser.parse("search java arraylist");
+        ParsedCommand result = parser.parse("search java arraylist");
 
         assertEquals("search", result.getCommandName());
         assertEquals("java arraylist", result.getArguments());
@@ -27,9 +24,6 @@ class CommandParserTest {
 
     @Test
     void shouldRejectBlankInput() {
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> parser.parse("   ")
-        );
+        assertThrows(IllegalArgumentException.class, () -> parser.parse("   "));
     }
 }
