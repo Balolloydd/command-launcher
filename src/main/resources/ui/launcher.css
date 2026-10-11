@@ -1,0 +1,36 @@
+
+.root {
+    -fx-background-color: transparent;
+}
+
+.search-bar {
+    -fx-background-color: #242830;
+    -fx-background-radius: 18;
+
+    -fx-border-color: #3c424d;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+
+    -fx-text-fill: #f5f6f8;
+    -fx-prompt-text-fill: #929aa7;
+
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 18px;
+
+    -fx-padding: 0 22 0 22;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0, 0, 0, 0.4),
+        20, 0.15, 0, 5
+    );
+}
+
+.search-bar:focused {
+    -fx-border-color: #718096;
+}
+
+.search-bar:error {
+    -fx-border-color: #d96d72;
+    -fx-prompt-text-fill: #e5a3a6;
+}
