@@ -1,5 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        LauncherProgram.run();
+        LauncherProgram launcher = ApplicationBootstrap.createLauncher();
+        launcher.run();
     }
 }

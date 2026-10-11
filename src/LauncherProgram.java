@@ -1,47 +1,49 @@
 import java.util.Scanner;
+import java.util.Objects;
 
-import parser.ParsedCommand;
 import parser.CommandParser;
+import parser.ParsedCommand;
 
-import search.SearchCommand;
-
-import command.CommandRegistry;
 import command.CommandDispatcher;
 
 public class LauncherProgram {
-    public static void run() {
-        boolean running = true;
-        
-        try (Scanner sc = new Scanner(System.in)) {
-            CommandParser parser = new CommandParser();
+    private final CommandParser parser;
+    private final CommandDispatcher dispatcher;
 
-            CommandRegistry registry = new CommandRegistry();
-            registry.register(new SearchCommand());
+    public LauncherProgram(CommandParser parser, CommandDispatcher dispatcher) {
+        this.parser = Objects.requireNonNull(parser);
+        this.dispatcher = Objects.requireNonNull(dispatcher);
+    }
 
-            CommandDispatcher dispatcher = new CommandDispatcher(registry);
-            
-            while (running) {
+    public void run() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
                 System.out.print("> ");
-                String input = sc.nextLine().trim();
-                
-                if (input.equalsIgnoreCase("exit")) {
-                    running = false;
-                    System.out.println("Exiting the program.");
-                    continue;
+                if (!scanner.hasNextLine()) {
+                    break;
                 }
 
+                String input = scanner.nextLine().strip();
                 if (input.isEmpty()) {
                     System.out.println("Please enter a command.");
                     continue;
+                }
+
+                if (input.equalsIgnoreCase("exit")) {
+                    break;
                 }
 
                 try {
                     ParsedCommand parsedCommand = parser.parse(input);
                     dispatcher.dispatch(parsedCommand);
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Error: " + e.getMessage());
+                    System.out.println("Invalid command: " + e.getMessage());
+                } catch (IllegalStateException e) {
+                    System.out.println("Execution error: " + e.getMessage());
                 }
             }
         }
+
+        System.out.println("Launcher terminated.");
     }
 }
