@@ -1,3 +1,5 @@
+package app;
+
 import browser.BrowserLauncher;
 import browser.DefaultBrowserResolver;
 
