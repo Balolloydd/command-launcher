@@ -16,16 +16,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class WindowLauncher {
-
-    private static final PseudoClass ERROR =
-        PseudoClass.getPseudoClass("error");
+    private static final PseudoClass ERROR = PseudoClass.getPseudoClass("error");
 
     private final Stage stage;
     private final TextField searchBar;
+    private final CommandProcessor processor;
 
     public WindowLauncher(Stage stage, CommandProcessor processor) {
         this.stage = Objects.requireNonNull(stage);
-        Objects.requireNonNull(processor);
+        this.processor = Objects.requireNonNull(processor);
 
         // Configure window
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -47,18 +46,12 @@ public class WindowLauncher {
         scene.setFill(Color.TRANSPARENT);
 
         // Apply CSS
-        scene.getStylesheets().add(
-            Objects.requireNonNull(
-                getClass().getResource("/ui/launcher.css")
-            ).toExternalForm()
-        );
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/ui/launcher.css")).toExternalForm());
 
         // Handle Enter
-        searchBar.setOnAction(event -> {
-            executeCommand(processor);
-        });
+        searchBar.setOnAction(event -> executeCommand());
 
-        // Clear error appearance when typing
+        // Reset error appearance when typing
         searchBar.textProperty().addListener(
             (observable, oldValue, newValue) -> {
                 if (!newValue.isEmpty()) {
@@ -71,14 +64,15 @@ public class WindowLauncher {
         // Handle Escape
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
-                stage.close();
+                hide();
             }
         });
 
         stage.setScene(scene);
     }
 
-    private void executeCommand(CommandProcessor processor) {
+    // Execute user command
+    private void executeCommand() {
         String input = searchBar.getText().strip();
 
         if (input.isEmpty()) {
@@ -87,8 +81,7 @@ public class WindowLauncher {
 
         try {
             processor.process(input);
-            stage.close();
-
+            hide();
         } catch (IllegalArgumentException | IllegalStateException e) {
             searchBar.clear();
             searchBar.setPromptText("Error: " + e.getMessage());
@@ -96,9 +89,31 @@ public class WindowLauncher {
         }
     }
 
+    // Display search window
     public void show() {
+        searchBar.clear();
+        searchBar.setPromptText("Type a command...");
+        searchBar.pseudoClassStateChanged(ERROR, false);
+
         stage.show();
         stage.centerOnScreen();
+        stage.toFront();
+        stage.requestFocus();
+
         Platform.runLater(searchBar::requestFocus);
+    }
+
+    // Hide search window
+    public void hide() {
+        stage.hide();
+    }
+
+    // Toggle search window visibility
+    public void toggle() {
+        if (stage.isShowing()) {
+            hide();
+        } else {
+            show();
+        }
     }
 }

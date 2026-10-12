@@ -49,7 +49,7 @@
                 <configuration>
                     <mainClass>app.Main</mainClass>
                     <options>
-                        <option>--enable-native-access=javafx.graphics</option>
+                        <option>--enable-native-access=javafx.graphics,ALL-UNNAMED</option>
                     </options>
                 </configuration>
             </plugin>
